@@ -1,5 +1,7 @@
 package com.zeoldcraft.chprivileges;
 
+import org.bukkit.configuration.ConfigurationSection;
+
 import net.krinsoft.privileges.Privileges;
 import net.krinsoft.privileges.groups.Group;
 import com.laytonsmith.abstraction.MCPlugin;
@@ -133,6 +135,102 @@ public class CHPrivileges {
 
 		public String docs() {
 			return "boolean {player, permission, [world]} Adds a permission to a player, returns its success.";
+		}
+	}
+	
+	@api
+	public static class priv_user_remove_permission extends privfunc {
+
+		public ExceptionType[] thrown() {
+			return new ExceptionType[]{ExceptionType.InvalidPluginException};
+		}
+
+		public Construct exec(Target t, Environment environment,
+				Construct... args) throws ConfigRuntimeException {
+			String player = args[0].val();
+			String perm = args[1].val();
+			String world = null;
+			if (args.length == 3) {
+				world = args[2].val();
+			}
+			return new CBoolean(getPriv(t).getPlayerManager().getPlayer(player).removePermission(world, perm), t);
+		}
+
+		public String getName() {
+			return "priv_user_remove_permission";
+		}
+
+		public Integer[] numArgs() {
+			return new Integer[]{2, 3};
+		}
+
+		public String docs() {
+			return "boolean {player, permission, [world]} Removes a permission from a player, returns its success.";
+		}
+	}
+	
+	@api
+	public static class priv_user_get_permissions extends privfunc {
+
+		public ExceptionType[] thrown() {
+			return new ExceptionType[]{ExceptionType.InvalidPluginException};
+		}
+
+		public Construct exec(Target t, Environment environment,
+				Construct... args) throws ConfigRuntimeException {
+			ConfigurationSection user = getPriv(t).getUserNode(args[0].val());
+			CArray ret = new CArray(t);
+			for (String perm : user.getStringList("permissions")) {
+				ret.push(new CString(perm, t));
+			}
+			return ret;
+		}
+
+		public String getName() {
+			return "priv_user_get_permissions";
+		}
+
+		public Integer[] numArgs() {
+			return new Integer[]{1};
+		}
+
+		public String docs() {
+			return "array {player} Returns an array of permissions set specifically for the given player."
+					+ " Works on offline players, so the name must be exact.";
+		}
+	}
+	
+	@api
+	public static class priv_group_get_permissions extends privfunc {
+
+		public ExceptionType[] thrown() {
+			return new ExceptionType[]{ExceptionType.InvalidPluginException, ExceptionType.NullPointerException};
+		}
+
+		public Construct exec(Target t, Environment environment,
+				Construct... args) throws ConfigRuntimeException {
+			ConfigurationSection group = getPriv(t).getGroupNode(args[0].val());
+			if (group == null) {
+				throw new ConfigRuntimeException("Group does not exist", ExceptionType.NullPointerException, t);
+			} else {
+				CArray ret = new CArray(t);
+				for (String perm : group.getStringList("permissions")) {
+					ret.push(new CString(perm, t));
+				}
+				return ret;
+			}
+		}
+
+		public String getName() {
+			return "priv_group_get_permissions";
+		}
+
+		public Integer[] numArgs() {
+			return new Integer[]{1};
+		}
+
+		public String docs() {
+			return "array {group} Returns an array of the permissions set for the given group.";
 		}
 	}
 	
