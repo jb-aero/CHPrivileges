@@ -36,6 +36,11 @@ public class CHPrivileges {
 				d.set("rank", new CInt(g.getRank(), t), t);
 				d.set("promotion", new CString(g.getPromotion(), t), t);
 				d.set("demotion", new CString(g.getDemotion(), t), t);
+				CArray inherits = new CArray(t);
+				for (String i : g.getGroupTree()) {
+					inherits.push(new CString(i, t));
+				}
+				d.set("inheritance", inherits, t);
 				ret.set(g.getName(), d, t);
 			}
 			return ret;
@@ -238,7 +243,7 @@ public class CHPrivileges {
 		Static.checkPlugin("Privileges", t);
 		MCPlugin p = Static.getServer().getPluginManager().getPlugin("Privileges");
 		if (p.isInstanceOf(Privileges.class)) {
-			return (Privileges) p;
+			return (Privileges) p.getHandle();
 		}
 		throw new ConfigRuntimeException("Privileges plugin is invalid!", ExceptionType.InvalidPluginException, t);
 	}
