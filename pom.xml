@@ -6,9 +6,8 @@
   <name>CHPrivileges</name>
       <repositories>
         <repository>
-            <id>project.local</id>
-            <name>Project Repository</name>
-            <url>file:${project.basedir}/lib</url>
+            <id>krinsoft</id>
+            <url>http://files.krinsoft.net:8085/nexus/content/groups/public</url>
         </repository>
         
         <repository>
@@ -26,8 +25,6 @@
   		<groupId>net.krinsoft</groupId>
   		<artifactId>Privileges</artifactId>
   		<version>1.8</version>
-  		<scope>system</scope>
-  		<systemPath>${project.basedir}/lib/Privileges.jar</systemPath>
   	</dependency>
   	<dependency>
   		<groupId>com.sk89q</groupId>
